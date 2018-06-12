@@ -7,9 +7,11 @@ class ProjectInput extends Component {
   }
 
   projectNameChangedHandler = (val: string) => {
-    this.setState({
-      projectName: val
-    })
+    this.setState(
+      {
+        projectName: val
+      }
+    )
   }
 
   projectSubmitHandler = () => {

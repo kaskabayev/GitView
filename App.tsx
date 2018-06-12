@@ -35,7 +35,6 @@ export default class App extends Component {
 
     if (this.state.refreshing) {
       searchQuery += (this.state.searchQuery !== '' ? '+' + this.state.searchQuery : '')
-      alert(searchQuery)
     }
 
     return fetch(`https://api.github.com/search/repositories?q=${searchQuery}&sort=stars&order=desc`, {
@@ -45,39 +44,41 @@ export default class App extends Component {
     })
     .then(response => response.json())
     .then(response => {
-      this.setState({
-        loading: false,
-        refreshing: false,
-        gitProjects: response.items
-      })
+      this.setState(
+        {
+          loading: false,
+          refreshing: false,
+          gitProjects: response.items
+        }
+      )
     })
   }
 
   loadGitHubProject = () => {
     let searchQuery = this.state.query + (this.state.searchQuery !== '' ? '+' + this.state.searchQuery : '')
 
-    return fetch(`https://api.github.com/search/repositories?q=${this.state.query}&sort=stars&order=desc`, {
+    return fetch(`https://api.github.com/search/repositories?q=${this.state.query}&sort=stars&order=desc&page=${this.state.page}`, {
       headers: {
         Accept: 'application/vnd.github.mercy-preview+json'
       }
     })
     .then(response => response.json())
     .then(response => {
-      this.setState(prevState => {
-        return {
+      this.setState(
+        {
           loading: false,
-          gitProjects: prevState.gitProjects.concat(response.items)
+          gitProjects: this.state.gitProjects.concat(response.items)
         }
-      })
+      )
     })
   }
 
   searchGitHubProject = (query: string) => {
-    this.setState(prevState => {
-      return {
+    this.setState(
+      {
         searchQuery: query
       }
-    })
+    )
 
     let searchQuery = this.state.query + '+' + query
 
@@ -88,10 +89,12 @@ export default class App extends Component {
     })
     .then(response => response.json())
     .then(response => {
-      this.setState({
-        loading: false,
-        gitProjects: response.items
-      })
+      this.setState(
+        {
+          loading: false,
+          gitProjects: response.items
+        }
+      )
     })
   }
 
@@ -105,12 +108,12 @@ export default class App extends Component {
   }
 
   projectSelectedHandler = (key: number) => {
-    this.setState(prevState => {
-      return {
-        selectedProject: prevState.gitProjects.find(project => {
+    this.setState(
+      {
+        selectedProject: this.state.gitProjects.find(project => {
           return project.id === key
-        })
-      }
+        }
+      )
     })
   }
 
@@ -127,9 +130,16 @@ export default class App extends Component {
       {
         refreshing: true
       },
-      () => {
-        this.getGitHubProjects()
-      }
+      () => this.getGitHubProjects()
+    )
+  }
+
+  handleLoadMore = () => {
+    this.setState(
+      {
+        page: this.state.page + 1
+      },
+      () => this.loadGitHubProject()
     )
   }
 
@@ -146,12 +156,11 @@ export default class App extends Component {
           onLoadAll={this.getFirstState}
         />
         <ProjectList
-          // places={this.state.places}
           projects={this.state.gitProjects}
           refreshing={this.state.refreshing}
 
           onRefresh={this.handleRefresh}
-          // onItemSelected={this.placeSelectedHandler}
+          onLoadMore={this.handleLoadMore}
           onItemSelected={this.projectSelectedHandler}
         />
       </View>
