@@ -1,17 +1,47 @@
 import React from 'react'
-import { Modal, View, Text, Image } from 'react-native'
+import { Modal, View, Text, Image, Button, StyleSheet } from 'react-native'
 
-const placeDetail = props => (
-    <Modal>
-        <View>
-            <Image source={props.placeImage}/>
-            <Text>{props.placeName}</Text>
+const placeDetail = props => {
+    let modalContent = undefined
+
+    if (props.selectedPlace) {
+        modalContent = (
             <View>
-                <Button />
-                <Button />
+                <Image source={props.selectedPlace.image} style={styles.placeImage}/>
+                <Text style={styles.placeName}>{props.selectedPlace.name}</Text>
             </View>
-        </View>
-    </Modal>
-)
+        )
+    }
+
+    return (
+        <Modal
+            onRequestClose={props.onModalClosed}
+            visible={props.selectedPlace !== undefined}
+            animationType='slide' >
+            <View style={styles.modalContainer}>
+                {modalContent}
+                <View>
+                    <Button title='Delete' color='red' onPress={props.onItemDeleted} />
+                    <Button title='Close' onPress={props.onModalClosed} />
+                </View>
+            </View>
+        </Modal>
+    )
+}
+
+const styles = StyleSheet.create({
+    modalContainer: {
+        margin: 22
+    },
+    placeImage: {
+        width: '100%',
+        height: 200
+    },
+    placeName: {
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: 28
+    }
+})
 
 export default placeDetail
