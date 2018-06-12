@@ -1,69 +1,159 @@
 import React, { Component } from 'react'
 import { StyleSheet, View } from 'react-native'
 
-import PlaceInput from './components/PlaceInput/PlaceInput'
-import PlaceList from './components/PlaceList/PlaceList'
-import PlaceDetail from './components/PlaceDetail/PlaceDetail'
-
-import placeImage from './assets/place.jpg'
+import ProjectInput from './components/ProjectInput/ProjectInput'
+import ProjectList from './components/ProjectList/ProjectList'
+import ProjectDetail from './components/ProjectDetail/ProjectDetail'
+import Loading from './components/Loading/Loading'
 
 export default class App extends Component {
   state = {
-    places: [],
-    selectedPlace: undefined
+    loading: true,
+    refreshing: false,
+    page: 1,
+    selectedProject: undefined,
+    gitProjects: [],
+    query: 'created:>2018-01-01',
+    searchQuery: ''
   }
 
-  placeAddedHandler = (placeName: string) => {
-    this.setState(prevState => {
-      return {
-        places: prevState.places.concat({
-          key: Math.random(),
-          name: placeName,
-          image: placeImage
-        })
+  componentDidMount() {
+    this.getGitHubProjects()
+  }
+
+  getFirstState = () => {
+    this.setState(
+      {
+        loading: true
+      },
+      () => this.getGitHubProjects()
+    )
+  }
+
+  getGitHubProjects = () => {
+    let searchQuery = this.state.query
+
+    if (this.state.refreshing) {
+      searchQuery += (this.state.searchQuery !== '' ? '+' + this.state.searchQuery : '')
+      alert(searchQuery)
+    }
+
+    return fetch(`https://api.github.com/search/repositories?q=${searchQuery}&sort=stars&order=desc`, {
+      headers: {
+        Accept: 'application/vnd.github.mercy-preview+json'
       }
+    })
+    .then(response => response.json())
+    .then(response => {
+      this.setState({
+        loading: false,
+        refreshing: false,
+        gitProjects: response.items
+      })
     })
   }
 
-  placeSelectedHandler = (key: number) => {
-    this.setState(prevState => {
-      return {
-        selectedPlace: prevState.places.find(place => {
-          return place.key === key
-        })
+  loadGitHubProject = () => {
+    let searchQuery = this.state.query + (this.state.searchQuery !== '' ? '+' + this.state.searchQuery : '')
+
+    return fetch(`https://api.github.com/search/repositories?q=${this.state.query}&sort=stars&order=desc`, {
+      headers: {
+        Accept: 'application/vnd.github.mercy-preview+json'
       }
+    })
+    .then(response => response.json())
+    .then(response => {
+      this.setState(prevState => {
+        return {
+          loading: false,
+          gitProjects: prevState.gitProjects.concat(response.items)
+        }
+      })
     })
   }
 
-  placeDeletedHandler = () => {
+  searchGitHubProject = (query: string) => {
     this.setState(prevState => {
       return {
-        places: prevState.places.filter(place => {
-          return place.key !== prevState.selectedPlace.key
-        }),
-        selectedPlace: undefined
+        searchQuery: query
+      }
+    })
+
+    let searchQuery = this.state.query + '+' + query
+
+    return fetch(`https://api.github.com/search/repositories?q=${searchQuery}&sort=stars&order=desc`, {
+      headers: {
+        Accept: 'application/vnd.github.mercy-preview+json'
+      }
+    })
+    .then(response => response.json())
+    .then(response => {
+      this.setState({
+        loading: false,
+        gitProjects: response.items
+      })
+    })
+  }
+
+  projectSearchHandler = (projectName: string) => {
+    this.setState(
+      {
+        loading: true
+      },
+      () => this.searchGitHubProject(projectName)
+    )
+  }
+
+  projectSelectedHandler = (key: number) => {
+    this.setState(prevState => {
+      return {
+        selectedProject: prevState.gitProjects.find(project => {
+          return project.id === key
+        })
       }
     })
   }
 
   modalClosedHandler = () => {
-    this.setState({
-      selectedPlace: undefined
-    })
+    this.setState(
+      {
+        selectedProject: undefined
+      }
+    )
+  }
+
+  handleRefresh = () => {
+    this.setState(
+      {
+        refreshing: true
+      },
+      () => {
+        this.getGitHubProjects()
+      }
+    )
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <PlaceDetail
-          selectedPlace={this.state.selectedPlace}
-          onItemDeleted={this.placeDeletedHandler}
+        <Loading loading={this.state.loading} />
+        <ProjectDetail
+          selectedProject={this.state.selectedProject}
           onModalClosed={this.modalClosedHandler}
         />
-        <PlaceInput onPlaceAdded={this.placeAddedHandler} />
-        <PlaceList
-          places={this.state.places}
-          onItemSelected={this.placeSelectedHandler} />
+        <ProjectInput
+          onProjectSearch={this.projectSearchHandler}
+          onLoadAll={this.getFirstState}
+        />
+        <ProjectList
+          // places={this.state.places}
+          projects={this.state.gitProjects}
+          refreshing={this.state.refreshing}
+
+          onRefresh={this.handleRefresh}
+          // onItemSelected={this.placeSelectedHandler}
+          onItemSelected={this.projectSelectedHandler}
+        />
       </View>
     )
   }
@@ -72,7 +162,7 @@ export default class App extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 26,
+    padding: 10,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'flex-start'
