@@ -1,43 +1,44 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
+import React, { Component } from 'react'
+import { StyleSheet, View } from 'react-native'
 
-import React from 'react'
-import { Component } from 'react'
+import PlaceInput from './components/PlaceInput/PlaceInput'
+import PlaceList from './components/PlaceList/PlaceList'
 
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native'
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu'
-})
+import placeImage from './assets/place.jpg'
 
-type Props = {}
-export default class App extends Component<Props> {
+export default class App extends Component {
+  state = {
+    places: []
+  }
+
+  placeAddedHandler = (placeName: string) => {
+    this.setState(prevState => {
+      return {
+        places: prevState.places.concat({
+          key: Math.random(),
+          name: placeName,
+          image: placeImage
+        })
+      }
+    })
+  }
+
+  placeDeletedHandler = (key: number) => {
+    this.setState(prevState => {
+      return {
+        places: prevState.places.filter(place => {
+          return place.key !== key
+        })
+      }
+    })
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js Yeah cool!!!
-        </Text>
-        <Text>
-          How are you, dude?
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
+        <PlaceInput onPlaceAdded={this.placeAddedHandler} />
+        <PlaceList places={this.state.places} onItemDeleted={this.placeDeletedHandler} />
       </View>
     )
   }
@@ -46,18 +47,9 @@ export default class App extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    padding: 26,
+    backgroundColor: '#fff',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF'
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5
+    justifyContent: 'flex-start'
   }
 })

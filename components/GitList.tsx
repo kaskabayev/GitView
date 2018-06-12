@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { AppRegistry, Text, Image } from 'react-native'
 
-export default class HelloWorldApp extends Component {
+export default class GitList extends Component {
     render() {
         let pic = {
             uri: 'https://upload.wikimedia.org/wikipedia/commons/d/de/Bananavarieties.jpg'
@@ -12,4 +12,4 @@ export default class HelloWorldApp extends Component {
     }
 }
 
-AppRegistry.registerComponent('AwesomeProject', () => HelloWorldApp)
+AppRegistry.registerComponent('AwesomeProject', () => GitList)
