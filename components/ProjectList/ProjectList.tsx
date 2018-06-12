@@ -10,7 +10,7 @@ const projectList = props => {
         refreshing={props.refreshing}
         onRefresh={props.onRefresh}
         onEndReached={props.onLoadMore}
-        onEndReachedThreshold={0}
+        onEndReachedThreshold={1}
         renderItem={(info) => (
             <ListItem
                 projectName={info.item.name}

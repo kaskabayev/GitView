@@ -67,7 +67,7 @@ export default class App extends Component {
       this.setState(
         {
           loading: false,
-          gitProjects: this.state.gitProjects.concat(response.items)
+          gitProjects: [...this.state.gitProjects, ...response.items]
         }
       )
     })
@@ -137,7 +137,8 @@ export default class App extends Component {
   handleLoadMore = () => {
     this.setState(
       {
-        page: this.state.page + 1
+        page: this.state.page + 1,
+        loading: true
       },
       () => this.loadGitHubProject()
     )
