@@ -6,7 +6,7 @@ const projectDetail = props => {
 
     if (props.selectedProject) {
         modalContent = (
-            <View>
+            <View style={styles.infoWrapper}>
                 <Image source={{uri: props.selectedProject.owner.avatar_url}} style={styles.projectImage}/>
                 <Text style={styles.ownerName}>{props.selectedProject.owner.login}</Text>
                 <Text style={styles.projectName}>Project name: {props.selectedProject.full_name}</Text>
@@ -32,6 +32,10 @@ const projectDetail = props => {
 const styles = StyleSheet.create({
     modalContainer: {
         margin: 22
+    },
+    infoWrapper: {
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     projectImage: {
         width: 150,

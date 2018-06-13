@@ -5,14 +5,15 @@
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
-    "start:android": "react-native run-android",
+    "android": "react-native run-android",
     "tsc": "tsc",
     "clean": "rimraf artifacts",
     "build": "npm run clean && npm run tsc --"
   },
   "dependencies": {
     "react": "16.3.1",
-    "react-native": "0.55.4"
+    "react-native": "0.55.4",
+    "react-navigation": "^2.3.1"
   },
   "devDependencies": {
     "@types/jest": "^23.0.1",
