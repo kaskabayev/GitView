@@ -3,7 +3,7 @@ import { StyleSheet, FlatList, RefreshControl } from 'react-native'
 
 import ListItem from '../ListItem/ListItem'
 
-const projectList = props => {
+const projectList = (props: any) => {
     return <FlatList
         style={styles.listContainer}
         data={props.projects}
