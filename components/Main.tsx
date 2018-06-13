@@ -1,9 +1,16 @@
 import React, { Component } from 'react'
-import { StyleSheet, View, Image, Button } from 'react-native'
+import { StyleSheet, View, Image, Button, Text } from 'react-native'
 
 class Main extends Component {
     static navigationOptions = {
         title: 'Main'
+    }
+
+    state = {
+        name: 'Stranger',
+        image: {
+            uri: 'http://octopus-fitness-impossible.github.io/impossible-octopus-fitness/img/octocat.png'
+        }
     }
 
     loginHandler = () => {
@@ -13,8 +20,9 @@ class Main extends Component {
     render() {
         return (
             <View style={styles.container}>
+                <View><Text style={styles.welcomeMessage}>Welcome, {this.state.name}</Text></View>
                 <Image
-                    source={{uri: 'http://octopus-fitness-impossible.github.io/impossible-octopus-fitness/img/octocat.png'}}
+                    source={this.state.image}
                     style={styles.image}
                 />
                 <View style={styles.buttonWrapper}>
@@ -58,6 +66,11 @@ const styles = StyleSheet.create({
     },
     buttonWrapper: {
         marginBottom: 15
+    },
+    welcomeMessage: {
+        padding: 20,
+        fontSize: 20,
+        fontWeight: 'bold'
     }
 })
 
